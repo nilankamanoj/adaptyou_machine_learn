@@ -32,11 +32,12 @@ def get_trains_tests(df,ratio):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=ratio, random_state=1)
     return X_train, X_test, y_train, y_test
 
-def test(model,X_test,Y_test):
+def test(model,X_test,Y_test,df):
     predict = model.predict(X_test).tolist()
     actual = Y_test.tolist()
-    total = [0,0,0,0,0,0]
-    success = [0,0,0,0,0,0]
+    comp_count = len(list(df)[1:-1])
+    total = [0] * (comp_count+1)
+    success = [0] * (comp_count+1)
     for i in range(len(predict)):
         if(actual[i]=='default'):
             total[0]+=1
@@ -66,11 +67,11 @@ rf.fit(X_train,y_train)
 ab.fit(X_train,y_train)
 
 
-print(test(nb,X_test,y_test))
-print(test(dt,X_test,y_test))
-print(test(lr,X_test,y_test))
-print(test(rf,X_test,y_test))
-print(test(ab,X_test,y_test))
+print(test(nb,X_test,y_test,df))
+print(test(dt,X_test,y_test,df))
+print(test(lr,X_test,y_test,df))
+print(test(rf,X_test,y_test,df))
+print(test(ab,X_test,y_test,df))
 
 
 
