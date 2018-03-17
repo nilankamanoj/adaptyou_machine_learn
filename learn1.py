@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
@@ -11,13 +11,13 @@ df = pd.read_csv('user.csv')
 
 def label_df(df):
     avgs = []
-    for i in range(5):
-        avgs.append(int(sum(df['comp'+str(i+1)].tolist())/len(df['comp'+str(i+1)].tolist())))
+    for column in list(df)[1:]:
+        avgs.append(int(sum(df[column].tolist())/len(df[column].tolist())))
     labels=[]
-    for j in range(1024):
+    for j in range(len(df['user name'].tolist())):
         label=''
-        for k in range(5):
-            if(int(df['comp'+str(k+1)].tolist()[j])>= avgs[k]):
+        for k in range(len(list(df)[1:])):
+            if(int(df[list(df)[k+1]].tolist()[j])>= avgs[k]):
                 label += str(k+1)+','
         if(len(label)==0):
             label='default,'
@@ -27,9 +27,9 @@ def label_df(df):
     return df
 
 
-def get_trains_tests(df):
+def get_trains_tests(df,ratio):
     X, y = df.iloc[:,1:-1], df.iloc[:, -1]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=ratio, random_state=1)
     return X_train, X_test, y_train, y_test
 
 def test(model,X_test,Y_test):
@@ -51,7 +51,7 @@ def test(model,X_test,Y_test):
     
 
 df = label_df(df)
-X_train, X_test, y_train, y_test = get_trains_tests(df)
+X_train, X_test, y_train, y_test = get_trains_tests(df,0.2)
 
 nb=GaussianNB()
 dt=DecisionTreeClassifier()
