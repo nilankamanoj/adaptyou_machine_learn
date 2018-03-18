@@ -5,6 +5,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier,AdaBoostClassifier
+import cPickle
 
 
 df = pd.read_csv('user.csv')
@@ -48,8 +49,14 @@ def test(model,X_test,Y_test,df):
         if(actual[i]!='default'):
             total[len(actual[i].split(','))]+=1
     return total,success,sum(total),sum(success),float(sum(success))/float(sum(total))
-    
-    
+
+def save_obj(obj,name):
+    with open(r"trained/"+name+".pickle", "wb") as output_file:
+        cPickle.dump(obj, output_file)
+        
+def load_obj(name):
+    with open(r"trained/"+name+".pickle", "rb") as input_file:
+        return cPickle.load(input_file)   
 
 df = label_df(df)
 X_train, X_test, y_train, y_test = get_trains_tests(df,0.2)
@@ -60,12 +67,13 @@ lr=LogisticRegression()
 rf=RandomForestClassifier()
 ab=AdaBoostClassifier()
 
+
+
 nb.fit(X_train,y_train)
 dt.fit(X_train,y_train)
 lr.fit(X_train,y_train)
 rf.fit(X_train,y_train)
 ab.fit(X_train,y_train)
-
 
 print(test(nb,X_test,y_test,df))
 print(test(dt,X_test,y_test,df))
